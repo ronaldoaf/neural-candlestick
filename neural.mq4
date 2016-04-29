@@ -1,8 +1,9 @@
 //+------------------------------------------------------------------+
 //|                                                       neural.mq4 |
-//|                                         Ronaldo Araújo de Farias |
+//|                                         Ronaldo AraÃºjo de Farias |
 //|                                                  http://apost.me |
 //+------------------------------------------------------------------+
+
 
 
 #property copyright "Copyright 2016, MetaQuotes Software Corp."
@@ -12,25 +13,25 @@
 
 #include <Fann2MQL.mqh>
 
-// o número total de camadas, aqui, há uma camada de entrada,
-// 2 camadas ocultas e uma camada de saída = 4 camadas.
+// o nÃºmero total de camadas, aqui, hÃ¡ uma camada de entrada,
+// 2 camadas ocultas e uma camada de saÃ­da = 4 camadas.
 int nn_layer = 4;
-int nn_input = 3; // Número de neurônios de entrada. Nosso teste padrão é feito de 3 números, 
-                  // significando 3 neurônios de entrada.
-int nn_hidden1 = 8; // número de neurônios na primeira camada oculta
-int nn_hidden2 = 5; // número na segunda camada oculta
-int nn_output = 1; // número de saídas
+int nn_input = 3; // NÃºmero de neurÃ´nios de entrada. Nosso teste padrÃ£o Ã© feito de 3 nÃºmeros, 
+                  // significando 3 neurÃ´nios de entrada.
+int nn_hidden1 = 8; // nÃºmero de neurÃ´nios na primeira camada oculta
+int nn_hidden2 = 5; // nÃºmero na segunda camada oculta
+int nn_output = 1; // nÃºmero de saÃ­das
 
-// trainingData[][] conterá os exemplos 
-// Vamos usar para ensinar as regras aos neurônios.
+// trainingData[][] conterÃ¡ os exemplos 
+// Vamos usar para ensinar as regras aos neurÃ´nios.
 double      trainingData[][4];  // IMPORTANTE! size = nn_input + nn_output
 
-int maxTraining = 500;  // número máximo de tempo do treinamento, 
-                        // os neurônios com alguns exemplos
-double targetMSE = 0.002; // o MSE (Mean-Square Error /Erro Quadrático Médio) dos neurônios, deveríamos 
-                          // obter no máximo (você vai entender isso mais abaixo no código)
+int maxTraining = 500;  // nÃºmero mÃ¡ximo de tempo do treinamento, 
+                        // os neurÃ´nios com alguns exemplos
+double targetMSE = 0.002; // o MSE (Mean-Square Error /Erro QuadrÃ¡tico MÃ©dio) dos neurÃ´nios, deverÃ­amos 
+                          // obter no mÃ¡ximo (vocÃª vai entender isso mais abaixo no cÃ³digo)
 
-int ann; // Esta variável será o identificador da rede neuronal.
+int ann; // Esta variÃ¡vel serÃ¡ o identificador da rede neuronal.
 
 
 
@@ -42,136 +43,136 @@ void OnStart(){
    int i;
    double MSE;
    
-    // Nós redimensionamos o array trainingData, para que possamos usá-lo.
-   // Nós vamos mudar o seu tamanho em um de cada vez.
+    // NÃ³s redimensionamos o array trainingData, para que possamos usÃ¡-lo.
+   // NÃ³s vamos mudar o seu tamanho em um de cada vez.
    ArrayResize(trainingData,1);
    
    Print("##### INIT #####");
    
-   // Criamos novas redes de neurônios
+   // Criamos novas redes de neurÃ´nios
    ann = f2M_create_standard(nn_layer, nn_input, nn_hidden1, nn_hidden2, nn_output);
    
    // Vamos verificar se foi criado com sucesso. 0 = OK, -1 = erro
    debug("f2M_create_standard()",ann);
    
-   // Nós definimos a função de ativação. Não se preocupe com isso. Apenas faça.
+   // NÃ³s definimos a funÃ§Ã£o de ativaÃ§Ã£o. NÃ£o se preocupe com isso. Apenas faÃ§a.
         f2M_set_act_function_hidden (ann, FANN_SIGMOID_SYMMETRIC_STEPWISE);
         f2M_set_act_function_output (ann, FANN_SIGMOID_SYMMETRIC_STEPWISE);
         
-        // Alguns estudos mostram que estatisticamente os melhores resultados são alcançados usando este intervalo; 
-     // mas você pode tentar diferente e ver se fica melhor ou o pior
+        // Alguns estudos mostram que estatisticamente os melhores resultados sÃ£o alcanÃ§ados usando este intervalo; 
+     // mas vocÃª pode tentar diferente e ver se fica melhor ou o pior
         f2M_randomize_weights (ann, -0.77, 0.77);
         
-        // Eu só imprimi no console o número de neurônios de entrada e saída. 
-      // Apenas para verificar. Apenas para fins de depuração.
+        // Eu sÃ³ imprimi no console o nÃºmero de neurÃ´nios de entrada e saÃ­da. 
+      // Apenas para verificar. Apenas para fins de depuraÃ§Ã£o.
    debug("f2M_get_num_input(ann)",f2M_get_num_input(ann));
    debug("f2M_get_num_output(ann)",f2M_get_num_output(ann));
         
    
    Print("##### REGISTER DATA #####");
    
-   //Agora nós preparamos alguns exemplos de dados (com expectativa de saída) 
+   //Agora nÃ³s preparamos alguns exemplos de dados (com expectativa de saÃ­da) 
    // e os adicionamos ao conjunto de treinamento.
-   // Uma vez que temos de adicionar todos os exemplos que queremos, nós vamos enviar 
-   // estes dados de treinamento configurados aos neurônios, para que eles possam aprender.
+   // Uma vez que temos de adicionar todos os exemplos que queremos, nÃ³s vamos enviar 
+   // estes dados de treinamento configurados aos neurÃ´nios, para que eles possam aprender.
    // prepareData() tem alguns argumentos:
-   // - Ação para fazer (treinar ou computar)
-   // - os dados (aqui, 3 dados por configuração)
-   // - O último argumento é a expectativa de saída.
-   // Aqui, esta função leva os dados de exemplo e a expectativa de saída, 
-   // e adiciona nas configurações de aprendizado.
-   // Verifique o comentário associado a esta função para obter mais detalhes.
+   // - AÃ§Ã£o para fazer (treinar ou computar)
+   // - os dados (aqui, 3 dados por configuraÃ§Ã£o)
+   // - O Ãºltimo argumento Ã© a expectativa de saÃ­da.
+   // Aqui, esta funÃ§Ã£o leva os dados de exemplo e a expectativa de saÃ­da, 
+   // e adiciona nas configuraÃ§Ãµes de aprendizado.
+   // Verifique o comentÃ¡rio associado a esta funÃ§Ã£o para obter mais detalhes.
    //
-   // Aqui é o padrão que estamos ensinando:
-   // Existem 3 números. Vamos chamá-los de a, b e c.
-   // Você pode raciocinar com esses números como sendo coordenadas de vetor 
+   // Aqui Ã© o padrÃ£o que estamos ensinando:
+   // Existem 3 nÃºmeros. Vamos chamÃ¡-los de a, b e c.
+   // VocÃª pode raciocinar com esses nÃºmeros como sendo coordenadas de vetor 
   // Por exemplo (vetor indo para cima ou para baixo)
-   // Se a < b && b < c então saída = 1
-   // Se a < b && b > c então saída = 0
-   // Se a > b && b > c então saída = 0
-   // Se a > b && b < c então saída = 1
+   // Se a < b && b < c entÃ£o saÃ­da = 1
+   // Se a < b && b > c entÃ£o saÃ­da = 0
+   // Se a > b && b > c entÃ£o saÃ­da = 0
+   // Se a > b && b < c entÃ£o saÃ­da = 1
    
    
-   // UP UP = UP / Se a < b && b < c então saída = 1 
+   // UP UP = UP / Se a < b && b < c entÃ£o saÃ­da = 1 
    prepareData("train",1,2,3,1);
    prepareData("train",8,12,20,1);
    prepareData("train",4,6,8,1);
    prepareData("train",0,5,11,1);
 
-   // UP DOWN = DOWN / Se a < b && b > c então saída = 0
+   // UP DOWN = DOWN / Se a < b && b > c entÃ£o saÃ­da = 0
    prepareData("train",1,2,1,0);
    prepareData("train",8,10,7,0);
    prepareData("train",7,10,7,0);
    prepareData("train",2,3,1,0);
 
-   // DOWN DOWN = DOWN / Se a > b && b > c então saída = 0
+   // DOWN DOWN = DOWN / Se a > b && b > c entÃ£o saÃ­da = 0
    prepareData("train",8,7,6,0);
    prepareData("train",20,10,1,0);
    prepareData("train",3,2,1,0);
    prepareData("train",9,4,3,0);
    prepareData("train",7,6,5,0);
 
-   // DOWN UP = UP / Se a > b && b < c então saída = 1
+   // DOWN UP = UP / Se a > b && b < c entÃ£o saÃ­da = 1
    prepareData("train",5,4,5,1);
    prepareData("train",2,1,6,1);
    prepareData("train",20,12,18,1);
    prepareData("train",8,2,10,1);
    
-   // Agora imprimiremos a formação integral configurada ao console, para verificar como se parece.
-   // Apenas para fins de depuração.
+   // Agora imprimiremos a formaÃ§Ã£o integral configurada ao console, para verificar como se parece.
+   // Apenas para fins de depuraÃ§Ã£o.
   
   // printDataArray();
    
    
    Print("##### TRAINING #####");
    
-   // Precisamos treinar os neurônios muitas vezes, ordenadamente, 
+   // Precisamos treinar os neurÃ´nios muitas vezes, ordenadamente, 
    // para que sejam bons naquilo que foram solicitados para fazer.
-   // Aqui vou treiná-los com os mesmos dados (nossos exemplos) várias vezes, 
-   // até que compreendam plenamente as regras que estamos tentando ensiná-los, ou até 
-   // O treinamento ser repetido o número 'maxTraining' de vezes  
+   // Aqui vou treinÃ¡-los com os mesmos dados (nossos exemplos) vÃ¡rias vezes, 
+   // atÃ© que compreendam plenamente as regras que estamos tentando ensinÃ¡-los, ou atÃ© 
+   // O treinamento ser repetido o nÃºmero 'maxTraining' de vezes  
    // (neste caso maxTraining = 500)
-   // Quanto melhor for entendida a regra, menor será o Erro Quadrático Médio.
-   // A função de teach() retorna o Erro Quadrático Médio (ou MSE)
-   // 0.1 ou inferior é um número suficiente para regras simples
-   // 0,02 ou menor é melhor para regras complexas como a que 
-   // estamos tentando ensiná-los (é um reconhecimento modelo, o que não é tão fácil. )
+   // Quanto melhor for entendida a regra, menor serÃ¡ o Erro QuadrÃ¡tico MÃ©dio.
+   // A funÃ§Ã£o de teach() retorna o Erro QuadrÃ¡tico MÃ©dio (ou MSE)
+   // 0.1 ou inferior Ã© um nÃºmero suficiente para regras simples
+   // 0,02 ou menor Ã© melhor para regras complexas como a que 
+   // estamos tentando ensinÃ¡-los (Ã© um reconhecimento modelo, o que nÃ£o Ã© tÃ£o fÃ¡cil. )
    for (i=0;i<maxTraining;i++) {
-      MSE = teach(); // Toda vez que o loop é executado, a função teach é ativada. 
-                     // Confira os comentários associados a esta função para entender mais.
-      if (MSE < targetMSE) { // Se o MSE é menor do que nós definimos (aqui targetMSE = 0,02)
-         debug("training finished. Trainings ",i+1); // Então imprimimos o console 
+      MSE = teach(); // Toda vez que o loop Ã© executado, a funÃ§Ã£o teach Ã© ativada. 
+                     // Confira os comentÃ¡rios associados a esta funÃ§Ã£o para entender mais.
+      if (MSE < targetMSE) { // Se o MSE Ã© menor do que nÃ³s definimos (aqui targetMSE = 0,02)
+         debug("training finished. Trainings ",i+1); // EntÃ£o imprimimos o console 
                                                      // em quantos treinamentos 
-                                                     // forem necessários para os neurônios compreenderem
+                                                     // forem necessÃ¡rios para os neurÃ´nios compreenderem
          i = maxTraining; // e vamos sair deste ciclo
       }
    }
    
-   // Nós imprimimos no console o valor MSE após o treinamento ter sido concluído.
+   // NÃ³s imprimimos no console o valor MSE apÃ³s o treinamento ter sido concluÃ­do.
    debug("MSE",f2M_get_MSE(ann));
    
    
    Print("##### RUNNING #####");
-   // E agora podemos solicitar aos neurônios a análise de novos dados que eles nunca viram.
-   // Será que eles vão reconhecer os padrões corretamente?
-   // Você pode ver que eu usei a mesma função prepareData() aqui, 
+   // E agora podemos solicitar aos neurÃ´nios a anÃ¡lise de novos dados que eles nunca viram.
+   // SerÃ¡ que eles vÃ£o reconhecer os padrÃµes corretamente?
+   // VocÃª pode ver que eu usei a mesma funÃ§Ã£o prepareData() aqui, 
    // com o primeiro argumento definido para "compute".
-   // O último argumento foi dedicado à expectativa de saída, 
-   // quando utilizamos esta função para registrar exemplos anteriores
-   // é inútil, então deixamos a zero.
-   // Se você preferir, você pode chamar diretamente a função compute().
-   // Neste caso, a estrutura é computar (inputVector[]);
-   // Então, ao invés de prepareData ("compute",1,3,1,0); você faria algo como:
+   // O Ãºltimo argumento foi dedicado Ã  expectativa de saÃ­da, 
+   // quando utilizamos esta funÃ§Ã£o para registrar exemplos anteriores
+   // Ã© inÃºtil, entÃ£o deixamos a zero.
+   // Se vocÃª preferir, vocÃª pode chamar diretamente a funÃ§Ã£o compute().
+   // Neste caso, a estrutura Ã© computar (inputVector[]);
+   // EntÃ£o, ao invÃ©s de prepareData ("compute",1,3,1,0); vocÃª faria algo como:
    // double inputVector[]; // declara um novo array.
    // ArrayResize(inputVector,f2M_get_num_input(ann)); 
-   // Redimensionar o array ao número de entrada do neurônio.
+   // Redimensionar o array ao nÃºmero de entrada do neurÃ´nio.
    // inputVector[0] = 1; // Adiciona os dados no array. 
    // inputVector[1] = 3;
    // inputVector[2] = 1;
-   // result = compute(inputVector); // Chamar a função compute(), com o array de entrada.
-   // a função prepareData() chama a função compute(), 
+   // result = compute(inputVector); // Chamar a funÃ§Ã£o compute(), com o array de entrada.
+   // a funÃ§Ã£o prepareData() chama a funÃ§Ã£o compute(), 
    // que imprime o resultado no console, 
-   // afim de verificarmos se os neurônios estavam certos ou não.
+   // afim de verificarmos se os neurÃ´nios estavam certos ou nÃ£o.
    
    
    /*
@@ -210,8 +211,8 @@ void OnStart(){
 
 /*************************
 ** printDataArray()
-** Imprimir os dados utilizadas no treinamento dos neurônios
-** Este é inútil. Apenas criado para fins de depuração.
+** Imprimir os dados utilizadas no treinamento dos neurÃ´nios
+** Este Ã© inÃºtil. Apenas criado para fins de depuraÃ§Ã£o.
 *************************/
 void printDataArray() {
    int i,j;
@@ -229,15 +230,15 @@ void printDataArray() {
 
 /*************************
 ** prepareData()
-** Prepara os dados para um treinamento ou computação.
+** Prepara os dados para um treinamento ou computaÃ§Ã£o.
 ** coloca os dados num array 
-** e os envia à função de treinamento ou execução.
-** Atualiza de acordo com o número de entrada/saída que o seu código precisa.
+** e os envia Ã  funÃ§Ã£o de treinamento ou execuÃ§Ã£o.
+** Atualiza de acordo com o nÃºmero de entrada/saÃ­da que o seu cÃ³digo precisa.
 *************************/
 void prepareData(string action, double a, double b, double c, double output) {
    double inputVector[];
    double outputVector[];
-   // nós redimensionamos os array no tamanho certo
+   // nÃ³s redimensionamos os array no tamanho certo
    ArrayResize(inputVector,f2M_get_num_input(ann));
    ArrayResize(outputVector,f2M_get_num_output(ann));
    
@@ -251,14 +252,14 @@ void prepareData(string action, double a, double b, double c, double output) {
    if (action == "compute") {
       compute(inputVector);
    }
-   // Se você tiver mais do que 3 entradas, basta alterar a estrutura desta função.
+   // Se vocÃª tiver mais do que 3 entradas, basta alterar a estrutura desta funÃ§Ã£o.
 }
 
 
 /*************************
 ** addTrainingData()
-** Adiciona um único conjunto de dados de treinamento 
-** (exemplo dados + expectativa de saída) para a configuração do treinamento global
+** Adiciona um Ãºnico conjunto de dados de treinamento 
+** (exemplo dados + expectativa de saÃ­da) para a configuraÃ§Ã£o do treinamento global
 *************************/
 void addTrainingData(double &inputArray[], double &outputArray[]) {
    int j;
@@ -278,9 +279,9 @@ void addTrainingData(double &inputArray[], double &outputArray[]) {
 
 /*************************
 ** teach()
-** Obtém todos os dados de treinamento e usá-os para treinar os neurônios de uma vez.
-** A fim de treinar corretamente os neurônios, você precisa executar
-** esta função muitas vezes, até que o Erro Quadrático Médio fique abaixo do limite.
+** ObtÃ©m todos os dados de treinamento e usÃ¡-os para treinar os neurÃ´nios de uma vez.
+** A fim de treinar corretamente os neurÃ´nios, vocÃª precisa executar
+** esta funÃ§Ã£o muitas vezes, atÃ© que o Erro QuadrÃ¡tico MÃ©dio fique abaixo do limite.
 *************************/
 double teach() {
    int i,j;
@@ -296,12 +297,12 @@ double teach() {
          inputVector[j] = trainingData[i][j];
       }
       outputVector[0] = trainingData[i][3];
-      //f2M_train() está mostrando apenas um exemplo de cada vez aos neurônios.
+      //f2M_train() estÃ¡ mostrando apenas um exemplo de cada vez aos neurÃ´nios.
       call = f2M_train(ann, inputVector, outputVector);
    }
    // Uma vez que temos de mostrar um exemplo, 
-   // vamos verificar se eles são bons, verificando o Erro Quadrático Médio (MSE) dos neurônios. 
-   // Se é baixo, eles aprenderam bem!
+   // vamos verificar se eles sÃ£o bons, verificando o Erro QuadrÃ¡tico MÃ©dio (MSE) dos neurÃ´nios. 
+   // Se Ã© baixo, eles aprenderam bem!
    MSE = f2M_get_MSE(ann);
    return(MSE);
 }
@@ -317,7 +318,7 @@ double compute(double &inputVector[]) {
    double output;
    ArrayResize(inputVector,f2M_get_num_input(ann));
    
-   // Envia novos dados aos neurônio
+   // Envia novos dados aos neurÃ´nio
    out = f2M_run(ann, inputVector);
    // e verifica o que eles dizem sobre isso usando f2M_get_output().
    output = f2M_get_output(ann, 0);
@@ -328,7 +329,7 @@ double compute(double &inputVector[]) {
 
 /*************************
 ** debug()
-** Dados de impressão ao console
+** Dados de impressÃ£o ao console
 *************************/
 void debug(string a, string b) {
    Print(a+" ==> "+b);
