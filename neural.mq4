@@ -1,7 +1,7 @@
 //+------------------------------------------------------------------+
 //|                                                       neural.mq4 |
-//|                        					Ronaldo Araújo de Farias |
-//|                                             	 http://apost.me |
+//|                                         Ronaldo Araújo de Farias |
+//|                                                  http://apost.me |
 //+------------------------------------------------------------------+
 
 #property copyright "Copyright 2016, MetaQuotes Software Corp."
